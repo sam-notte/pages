@@ -31,11 +31,15 @@ setup: check-api-dir
 	@cd ${API_DIR} && uv sync --dev --all-extras
 	@cd ${API_DIR} && uv run patchright install
 	@uv pip install ipykernel
-	@if [ -f ${API_DIR}/.env ]; then \
-		cp ${API_DIR}/.env .; \
-		echo "\033[0;32mCopied .env file to current directory\033[0m"; \
+	@if [ ! -f .env ]; then \
+		if [ -f ${API_DIR}/.env ]; then \
+			cp ${API_DIR}/.env .; \
+			echo "\033[0;32mCopied .env file to current directory\033[0m"; \
+		else \
+			echo "\033[0;31mWarning: .env file not found in API directory: $(API_DIR)\n"; \
+		fi; \
 	else \
-		echo "\033[0;31mWarning: .env file not found in API directory: $(API_DIR)\n"; \
+		echo "\033[0;33mNote: .env already exists in current directory, not overwriting\033[0m"; \
 	fi
 	@$(MAKE) pre-commit-setup
 
